@@ -5,7 +5,7 @@
  *
  */
 
-#include<interrupts.hpp>
+#include"interrupts.hpp"
 
 int main(int argc, char** argv) {
 
@@ -19,9 +19,9 @@ int main(int argc, char** argv) {
     std::string execution;  //!< string to accumulate the execution output
 
     /******************ADD YOUR VARIABLES HERE*************************/
-
-
-
+    int current_time = 0;
+    int device_num;
+    int delay;
     /******************************************************************/
 
     //parse each line of the input trace file
@@ -29,8 +29,35 @@ int main(int argc, char** argv) {
         auto [activity, duration_intr] = parse_trace(trace);
 
         /******************ADD YOUR SIMULATION CODE HERE*************************/
+        if(activity == "CPU") {
+            execution += std::to_string(current_time) + ", " + std::to_string(duration_intr) + ", CPU burst\n";
+            current_time += duration_intr;
+        } 
 
+        else if(activity == "SYSCALL" || activity == "END_IO") {
+            // Use device number for lookup
+            device_num = duration_intr;
+            delay = delays[device_num];
+            std::string vector_addr = vectors[device_num];
 
+            // Step 1: Switch to kernel mode
+            execution += std::to_string(current_time) + ", 1, switch to kernel mode\n";
+            current_time += 1;
+
+            // Step 2: Context save
+            execution += std::to_string(current_time) + ", 10, context saved\n";
+            current_time += 10;
+
+            // Step 3: Find vector in memory
+
+            // Step 4: Obtain ISR address
+
+            // Step 5: Call device driver
+
+            // Step 6: IRET
+            execution += std::to_string(current_time) + ", 1, IRET\n";
+            current_time += 1;
+        }
 
         /************************************************************************/
 
